@@ -38,11 +38,13 @@ fn add(numbers: &str) -> Result<i32, NegativeNumberError> {
     };
 
     // Replace newlines with the current delimiter
-    let numbers = numbers.replace('\n', delimiter);
+    let numbers = numbers.replace(delimiter, ",");
 
     // Split and parse numbers
-    let parsed_numbers: Result<Vec<i32>, _> =
-        numbers.split(delimiter).map(|n| n.trim().parse()).collect();
+    let parsed_numbers: Result<Vec<i32>, _> = numbers
+        .split(&[',', '\n'])
+        .map(|n| n.trim().parse())
+        .collect();
 
     let parsed_numbers = match parsed_numbers {
         Ok(nums) => nums,
@@ -94,6 +96,11 @@ mod tests {
     #[test]
     fn test_custom_delimiter() {
         assert_eq!(add("//;\n1;2").unwrap(), 3);
+    }
+
+    #[test]
+    fn test_custom_delimiter_and_orignalcondition() {
+        assert_eq!(add("//;\n1;2,3,4\n5,1").unwrap(), 16);
     }
 
     #[test]
